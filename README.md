@@ -353,17 +353,17 @@ npx expo start
 
 ### Parte 2 — Atividades Aplicadas (`habit-tracker-expo`)
 
-Os arquivos com a estrutura e comentários `// TODO` estão prontos para desenvolvimento:
+Implementação concluída das **Atividades 1 e 2** da Aula 6:
 
-| Arquivo | O que é | Atividade |
+| Arquivo | O que foi implementado | Atividade |
 |---|---|---|
-| `src/app/_layout.tsx` | Moldura com `Stack`, `headerTintColor: '#f26522'`, títulos das rotas | Atividade 1 e 2 |
-| `src/app/index.tsx` | Rota inicial apontando para `../screens/tela-habitos` com navegação | Atividade 1 |
-| `src/app/registrar-foto.tsx` | Contrato checklist no topo, galeria + câmera com 3 estados de falha e prévia | Atividade 1 |
-| `src/app/sobre.tsx` | Tela sobre com nome, versão e declaração de limitação técnica | Atividade 1 |
-| `src/app/galeria.tsx` | Galeria de até 6 fotos em grade com justificativa teórica do recorte | Atividade 2 |
-| `src/components/miniatura-foto.tsx` | Componente de miniatura da galeria (isolado fora de `src/app/`) | Atividade 2 |
-| `app.json` | Configuração de `scheme: "habittracker"` e plugin `expo-image-picker` com `TODO A2` e `TODO A3` | Atividade 1 |
+| `src/app/_layout.tsx` | Moldura com `Stack`, `headerTintColor: '#f26522'` e títulos configurados para `/`, `/registrar-foto`, `/sobre` e `/galeria` | Atividade 1 e 2 |
+| `src/app/index.tsx` | Rota inicial apontando para `../screens/tela-habitos`, com navegação via `Link` (`/galeria` e `/sobre`) e `router.push` (`/registrar-foto`) | Atividade 1 e 2 |
+| `src/app/registrar-foto.tsx` | Contrato de três tempos no topo, escolha da galeria ou captura via câmera com tratamento de cancelamento, câmera negada e câmera bloqueada, prévia em `expo-image` e botão Concluir (`router.back()`) | Atividade 1 |
+| `src/app/sobre.tsx` | Tela sobre com nome do app, versão da aula e declaração da limitação técnica | Atividade 1 |
+| `src/app/galeria.tsx` | Galeria de até 6 fotos de progresso em grade de 3 colunas (`FlatList`), estado vazio e comentário explicando por que seleção múltipla e recorte não convivem | Atividade 2 |
+| `src/components/miniatura-foto.tsx` | Componente `MiniaturaFoto` com `expo-image`, `recyclingKey` e `maxWidth: '33%'`, isolado fora de `src/app/` | Atividade 2 |
+| `app.json` | Configuração de `scheme: "habittracker"`, plugin `expo-router` e `expo-image-picker` com textos de permissão claros e `microphonePermission: false` | Atividade 1 |
 
 > ⚠️ **Limitação declarada das rotas (Restrições):**
 > A foto escolhida ou capturada em `/registrar-foto` (ou na `/galeria`) **não volta para a lista** — levar dados e estados entre diferentes telas é o conteúdo da Aula 7. Reconhecer e documentar essa fronteira faz parte da entrega da aula.

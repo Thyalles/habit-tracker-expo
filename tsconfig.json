@@ -3,5 +3,5 @@
   "compilerOptions": {
     "strict": true
   },
-  "exclude": ["exercicios", "node_modules"]
+  "exclude": ["exercicios", "backend", "node_modules"]
 }

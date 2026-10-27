@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { BotaoAcao } from '../components/botao-acao';
 import { ItemHabito } from '../components/item-habito';
 import { ListaVazia } from '../components/lista-vazia';
 import { HABITOS } from '../data/habitos';
-import { agrupar, filtrarPorTitulo, type Secao } from '../lib/agrupar';
+import { agrupar, filtrarPorTitulo } from '../lib/agrupar';
 import { cores, espaco, tipografia } from '../theme';
 import type { Habito } from '../types/habito';
 import { TelaRegistrarHabito } from './tela-registrar-habito';
@@ -22,11 +23,10 @@ function Cabecalho({ busca, onBuscaChange }: { busca: string; onBuscaChange: (bu
 }
 
 export function TelaHabitos() {
+  const router = useRouter();
   const [habitos, setHabitos] = useState<Habito[]>(HABITOS);
   const [busca, setBusca] = useState('');
   const [atualizando, setAtualizando] = useState(false);
-  // Aula 5 — a tela de registro aparece por CONDICIONAL, não por navegação
-  // (`expo-router` é Aula 7). Este booleano é a "navegação" que temos.
   const [registrando, setRegistrando] = useState(false);
 
   function alternar(id: string) {
@@ -60,14 +60,6 @@ export function TelaHabitos() {
   }
 
   function adicionar(novo: Habito) {
-    // TODO 5.22: acrescente o hábito recém-registrado à lista — array NOVO, como na
-    //           Aula 4 — e feche a tela de registro.
-    //           Pense em onde ele deve entrar: no fim da lista o usuário não vê o
-    //           resultado do que acabou de fazer sem rolar até lá.
-    //           ⚠️ Depois de implementar, TESTE o "puxar para atualizar": do jeito que
-    //           `recarregar()` está escrito hoje, o hábito que custou duas permissões ao
-    //           usuário some no primeiro puxão. Decida o que fazer a respeito.
-
     // Array NOVO, como na Aula 4 — nunca `push` no anterior. E ele entra no TOPO: no fim
     // da lista o usuário teria que rolar para ver o resultado do que acabou de fazer.
     setHabitos((prev) => [novo, ...prev]);
@@ -78,16 +70,6 @@ export function TelaHabitos() {
 
   const secoes = agrupar(filtrarPorTitulo(habitos, busca));
 
-
-  // TODO 5.21: quando `registrando` for true, devolva a <TelaRegistrarHabito /> no lugar
-  //           da lista — é assim que se troca de tela sem navegação (Aula 7).
-  //           Ela precisa de duas funções: o que fazer com o hábito salvo (`adicionar`)
-  //           e o que fazer no cancelamento.
-  //           Enquanto ela NÃO está montada, a câmera do aparelho está desligada.
-
-  // Troca de tela sem navegação: `expo-router` é Aula 7, e até lá este booleano é a
-  // "navegação" que temos. Enquanto a tela de registro NÃO está montada, a câmera do
-  // aparelho está desligada.
   if (registrando) {
     return (
       <TelaRegistrarHabito onSalvar={adicionar} onCancelar={() => setRegistrando(false)} />
@@ -116,10 +98,27 @@ export function TelaHabitos() {
         ListHeaderComponent={<Cabecalho busca={busca} onBuscaChange={setBusca} />}
         contentContainerStyle={styles.conteudo}
       />
-      <BotaoAcao rotulo="Novo hábito" onPressionar={() => setRegistrando(true)} />
-      {/* TODO A1 / A2: adicione aqui a navegação para as novas rotas:
-          - Link para '/sobre' e Link para '/galeria' (Atividade 2)
-          - router.push('/registrar-foto') ou Link para '/registrar-foto' */}
+
+      <View style={styles.rodape}>
+        <BotaoAcao rotulo="Novo hábito" onPressionar={() => setRegistrando(true)} />
+
+        <Pressable
+          onPress={() => router.push('/registrar-foto')}
+          style={({ pressed }) => [styles.botaoRota, pressed && styles.botaoPressionado]}
+        >
+          <Text style={styles.textoBotaoRota}>Registrar foto do hábito</Text>
+        </Pressable>
+
+        <Link href="/galeria" asChild>
+          <Pressable style={({ pressed }) => [styles.botaoSecundario, pressed && styles.botaoPressionado]}>
+            <Text style={styles.textoBotaoSecundario}>Galeria do hábito</Text>
+          </Pressable>
+        </Link>
+
+        <Link href="/sobre" style={styles.linkSobre}>
+          Sobre o app
+        </Link>
+      </View>
     </View>
   );
 }
@@ -147,4 +146,37 @@ const styles = StyleSheet.create({
   },
   separador: { height: espaco.sm },
   rodape: { padding: espaco.md, gap: espaco.sm },
+  botaoRota: {
+    backgroundColor: '#f26522',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  textoBotaoRota: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  botaoSecundario: {
+    borderWidth: 2,
+    borderColor: '#f26522',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  textoBotaoSecundario: {
+    color: '#f26522',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  botaoPressionado: {
+    opacity: 0.7,
+  },
+  linkSobre: {
+    fontSize: 16,
+    color: '#f26522',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    paddingVertical: 4,
+  },
 });

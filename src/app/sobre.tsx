@@ -1,10 +1,5 @@
 // Atividade 1 — Tela Sobre
 // Onde: src/app/sobre.tsx
-//
-// Requisitos:
-//   1. Nome do app.
-//   2. Versão da aula (Aula 6).
-//   3. Declaração da limitação técnica das telas ainda não conversarem.
 
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -17,9 +12,10 @@ export default function TelaSobre() {
       <Text style={estilos.titulo}>Rastreador de Micro-hábitos</Text>
       <Text style={estilos.subtitulo}>Versão: Aula 6 (Navegação & Fotos)</Text>
 
-      {/* TODO A1.9: exiba aqui o texto explicando a limitação atual do app:
-                    "A foto registrada não volta para a lista de hábitos — levar
-                    dados entre telas será implementado na próxima aula." */}
+      <Text style={estilos.limitacao}>
+        A foto registrada não volta para a lista de hábitos — levar dados entre telas será
+        implementado na próxima aula.
+      </Text>
 
       <Pressable onPress={() => router.back()} style={estilos.botao}>
         <Text style={estilos.textoBotao}>Voltar</Text>

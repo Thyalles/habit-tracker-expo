@@ -1,9 +1,11 @@
 // Atividade 2 — A Galeria do Hábito
 // Onde: src/app/galeria.tsx
 //
-// TODO A2.2 (OBRIGATÓRIO): escreva aqui num comentário por que a seleção múltipla
-//                          e o recorte (allowsEditing) NÃO convivem:
-// _______________________________________________________________________________
+// Por que a seleção múltipla e o recorte (allowsEditing) NÃO convivem:
+// Quando `allowsMultipleSelection: true` está ativo, o seletor nativo do sistema
+// operacional permite marcar várias fotos de uma só vez e desativa a etapa individual
+// de recorte (`allowsEditing` é ignorado pelo sistema), pois não existe fluxo nativo
+// para recortar múltiplas imagens em lote antes de devolvê-las ao app.
 
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -12,22 +14,27 @@ import * as ImagePicker from 'expo-image-picker';
 // NUNCA declarado dentro de src/app/ para não gerar rotas fantasmas.
 import { MiniaturaFoto } from '../components/miniatura-foto';
 
-// TODO A2.3: declare aqui a função/componente de lista vazia
+function renderMiniatura({ item }: { item: ImagePicker.ImagePickerAsset }) {
+  return <MiniaturaFoto item={item} />;
+}
+
 function ListaVazia() {
   return <Text style={estilos.vazio}>Nenhuma foto escolhida ainda.</Text>;
 }
 
 export default function TelaGaleria() {
-  // TODO A2.4: estado com a lista de assets, começando vazia e tipada com ImagePicker.ImagePickerAsset[]
   const [fotos, setFotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
 
   async function escolherFotos() {
-    // TODO A2.5: abra a galeria configurada para:
-    //           - mediaTypes: ['images']
-    //           - allowsMultipleSelection: true
-    //           - selectionLimit: 6
-    //           - quality: 0.7
-    //           Trate o cancelamento e guarde os assets selecionados em `fotos`.
+    const resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: 6,
+      quality: 0.7,
+    });
+
+    if (resultado.canceled) return;
+    setFotos(resultado.assets);
   }
 
   return (
@@ -36,14 +43,15 @@ export default function TelaGaleria() {
         <Text style={estilos.textoBotao}>Escolher até 6 fotos</Text>
       </Pressable>
 
-      {/* TODO A2.6: FlatList configurada com:
-                    - data={fotos}
-                    - keyExtractor por foto.uri
-                    - renderItem usando <MiniaturaFoto item={item} />
-                    - numColumns={3}
-                    - columnWrapperStyle={estilos.linha}
-                    - contentContainerStyle={estilos.grade}
-                    - ListEmptyComponent={ListaVazia} */}
+      <FlatList
+        data={fotos}
+        keyExtractor={(foto) => foto.uri}
+        renderItem={renderMiniatura}
+        numColumns={3}
+        columnWrapperStyle={estilos.linha}
+        contentContainerStyle={estilos.grade}
+        ListEmptyComponent={ListaVazia}
+      />
     </View>
   );
 }
