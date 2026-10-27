@@ -368,3 +368,34 @@ Implementação concluída das **Atividades 1 e 2** da Aula 6:
 > ⚠️ **Limitação declarada das rotas (Restrições):**
 > A foto escolhida ou capturada em `/registrar-foto` (ou na `/galeria`) **não volta para a lista** — levar dados e estados entre diferentes telas é o conteúdo da Aula 7. Reconhecer e documentar essa fronteira faz parte da entrega da aula.
 
+## Estado atual — Aula 7
+
+Resoluções das Partes 1 e 2 da Aula 7 (**Navegação avançada com Expo Router: Rotas dinâmicas, Tabs, Drawer** e **Push Notifications locais com `expo-notifications`**).
+
+### Parte 1 — Exercícios Guiados (`exercicios/`)
+
+| Arquivo | O que é | Referência em `exercises.md` |
+|---|---|---|
+| `exercicios/habit/[id].tsx` | Rota dinâmica lendo `id` via `useLocalSearchParams<{ id: string }>()` e exibindo `Hábito ID: {id}` | Exercício 1 |
+| `exercicios/(tabs)/_layout.tsx` | Layout de abas (`<Tabs>`) com Home e Stats, ícones `Feather` e `tabBarActiveTintColor: '#007AFF'` | Exercício 2 |
+| `exercicios/(tabs)/index.tsx` | Aba Home com navegação imperativa para `/habit/[id]` (`id: '5'`) e atalho para notificações | Exercício 1 e 2 |
+| `exercicios/(tabs)/stats.tsx` | Aba Stats de estatísticas | Exercício 2 |
+| `exercicios/_layout.tsx` | Layout raiz com `<Drawer>` (`expo-router/drawer`) e 3 itens (`(tabs)`, `about`, `settings`) com `MaterialIcons` | Exercício 3 |
+| `exercicios/about.tsx` | Tela Sobre do Drawer | Exercício 3 |
+| `exercicios/settings.tsx` | Tela Configurações do Drawer | Exercício 3 |
+| `exercicios/notificacoes.tsx` | Fluxo completo de notificação local (`setNotificationHandler`, `requestPermissionsAsync`, listeners e agendamento em 5s) | Exercício 4 |
+
+### Parte 2 — Atividade Aplicada (`src/app/` e `src/screens/tela-habitos.tsx`)
+
+| Arquivo | O que foi implementado |
+|---|---|
+| `src/app/_layout.tsx` | `<Drawer>` com os 3 itens principais (`(tabs)` Home, `about` Sobre, `settings` Configurações) usando `MaterialIcons` |
+| `src/app/(tabs)/_layout.tsx` | `<Tabs>` com 2 abas (`index` Home e `stats` Stats) usando `Feather` e `tabBarActiveTintColor: '#007AFF'` |
+| `src/app/(tabs)/index.tsx` | Rota da aba Home apontando para `TelaHabitos` |
+| `src/app/(tabs)/stats.tsx` | Aba de estatísticas dos hábitos da lista |
+| `src/app/habit/[id].tsx` | Rota dinâmica de detalhe do hábito com `useLocalSearchParams<{ id: string }>()`, exibição de `Hábito ID: {id}` e retorno à lista |
+| `src/app/about.tsx` | Tela Sobre acessível pelo menu lateral (Drawer) |
+| `src/app/settings.tsx` | Tela de Configurações acessível pelo menu lateral (Drawer) |
+| `src/screens/tela-habitos.tsx` | Integração de notificações locais (`setNotificationHandler`, permissão, listeners imprimindo `"Notificação recebida"` e `"Notificação tocada"`, agendamento para 5s e navegação automática ao tocar na notificação ou em um hábito da lista) |
+
+

@@ -48,6 +48,7 @@
       ],
       "expo-sensors",
       "expo-router",
+      "expo-notifications",
       [
         "expo-image-picker",
         {
