@@ -1,4 +1,3 @@
-import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from 'react';
 import { Link, useRouter } from 'expo-router';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -11,6 +10,14 @@ import { agrupar, filtrarPorTitulo } from '../lib/agrupar';
 import { cores, espaco, tipografia } from '../theme';
 import type { Habito } from '../types/habito';
 import { TelaRegistrarHabito } from './tela-registrar-habito';
+import {
+  addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
+  requestPermissionsAsync,
+  scheduleNotificationAsync,
+  SchedulableTriggerInputTypes,
+  setNotificationHandler,
+} from '../services/notificacoes';
 
 function Cabecalho({ busca, onBuscaChange }: { busca: string; onBuscaChange: (busca: string) => void; }) {
   return (
@@ -23,11 +30,12 @@ function Cabecalho({ busca, onBuscaChange }: { busca: string; onBuscaChange: (bu
   );
 }
 
-Notifications.setNotificationHandler({
+setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -41,17 +49,17 @@ export function TelaHabitos() {
 
   useEffect(() => {
     async function requestPermission() {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const { status } = await requestPermissionsAsync();
       setPermissionGranted(status === 'granted');
     }
 
     requestPermission();
 
-    const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
+    const receivedSubscription = addNotificationReceivedListener(() => {
       console.log('Notificação recebida');
     });
 
-    const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+    const responseSubscription = addNotificationResponseReceivedListener((response) => {
       console.log('Notificação tocada');
       const habitId = String(response.notification.request.content.data?.habitId ?? '5');
       router.push({ pathname: '/habit/[id]', params: { id: habitId } });
@@ -69,13 +77,14 @@ export function TelaHabitos() {
       return;
     }
 
-    await Notifications.scheduleNotificationAsync({
+    await scheduleNotificationAsync({
       content: {
         title: 'Lembrete de hábito',
         body: 'Seu hábito precisa ser revisado.',
         data: { habitId: '5' },
       },
       trigger: {
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: 5,
       },
     });

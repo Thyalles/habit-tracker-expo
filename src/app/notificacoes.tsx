@@ -1,12 +1,21 @@
-import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-Notifications.setNotificationHandler({
+import {
+  addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
+  requestPermissionsAsync,
+  scheduleNotificationAsync,
+  SchedulableTriggerInputTypes,
+  setNotificationHandler,
+} from '../services/notificacoes';
+
+setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -15,17 +24,17 @@ export default function NotificationScreen() {
 
   useEffect(() => {
     async function requestPermission() {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const { status } = await requestPermissionsAsync();
       setPermissionGranted(status === 'granted');
     }
 
     requestPermission();
 
-    const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
+    const receivedSubscription = addNotificationReceivedListener(() => {
       console.log('Notificação recebida');
     });
 
-    const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+    const responseSubscription = addNotificationResponseReceivedListener((response) => {
       console.log('Notificação tocada');
       const id = String(response.notification.request.content.data?.habitId ?? '5');
       console.log('Abrindo detalhe do hábito', id);
@@ -43,13 +52,14 @@ export default function NotificationScreen() {
       return;
     }
 
-    await Notifications.scheduleNotificationAsync({
+    await scheduleNotificationAsync({
       content: {
         title: 'Lembrete do hábito',
         body: 'Seu hábito precisa ser revisado agora.',
         data: { habitId: '5' },
       },
       trigger: {
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: 5,
       },
     });

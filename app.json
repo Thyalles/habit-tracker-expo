@@ -56,7 +56,8 @@
           "cameraPermission": "O Habit Tracker usa a câmera para você registrar a foto do seu hábito.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

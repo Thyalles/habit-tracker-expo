@@ -13,7 +13,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="home" size={size} color={typeof color === 'number' || color == null ? '#007AFF' : color} />
+          ),
         }}
       />
       {/* Aba 2: Stats */}
@@ -21,7 +23,9 @@ export default function TabLayout() {
         name="stats"
         options={{
           title: 'Stats',
-          tabBarIcon: ({ color, size }) => <Feather name="bar-chart-2" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="bar-chart-2" size={size} color={typeof color === 'number' || color == null ? '#007AFF' : color} />
+          ),
         }}
       />
     </Tabs>

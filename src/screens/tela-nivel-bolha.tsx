@@ -28,7 +28,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
-import type { EventSubscription } from 'expo-modules-core';
 
 import { cores, espaco, tipografia } from '../theme';
 
@@ -75,7 +74,7 @@ function limitar(valor: number, limite: number): number {
 }
 
 export function TelaNivelBolha() {
-  const [assinatura, setAssinatura] = useState<EventSubscription | null>(null);
+  const [assinatura, setAssinatura] = useState<ReturnType<typeof Accelerometer.addListener> | null>(null);
   const [inclinacao, setInclinacao] = useState({ x: 0, y: 0 });
   const [indisponivel, setIndisponivel] = useState(false);
 

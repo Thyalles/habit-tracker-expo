@@ -13,7 +13,9 @@ export default function RootLayout() {
         options={{
           drawerLabel: 'Home',
           title: 'Home',
-          drawerIcon: ({ color, size }) => <MaterialIcons name="home" size={size} color={color} />,
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="home" size={size} color={typeof color === 'number' || color == null ? '#007AFF' : color} />
+          ),
         }}
       />
       <Drawer.Screen
@@ -21,7 +23,9 @@ export default function RootLayout() {
         options={{
           drawerLabel: 'Sobre',
           title: 'Sobre',
-          drawerIcon: ({ color, size }) => <MaterialIcons name="info" size={size} color={color} />,
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="info" size={size} color={typeof color === 'number' || color == null ? '#007AFF' : color} />
+          ),
         }}
       />
       <Drawer.Screen
@@ -29,7 +33,9 @@ export default function RootLayout() {
         options={{
           drawerLabel: 'Configurações',
           title: 'Configurações',
-          drawerIcon: ({ color, size }) => <MaterialIcons name="settings" size={size} color={color} />,
+          drawerIcon: ({ color, size }) => (
+            <MaterialIcons name="settings" size={size} color={typeof color === 'number' || color == null ? '#007AFF' : color} />
+          ),
         }}
       />
       <Drawer.Screen
@@ -45,6 +51,18 @@ export default function RootLayout() {
           title: 'Notificações (Ex 4)',
           drawerItemStyle: { display: 'none' },
         }}
+      />
+      <Drawer.Screen
+        name="galeria"
+        options={{ title: 'Galeria', drawerItemStyle: { display: 'none' } }}
+      />
+      <Drawer.Screen
+        name="registrar-foto"
+        options={{ title: 'Registrar foto', drawerItemStyle: { display: 'none' } }}
+      />
+      <Drawer.Screen
+        name="sobre"
+        options={{ title: 'Sobre (Aula 5)', drawerItemStyle: { display: 'none' } }}
       />
     </Drawer>
   );
