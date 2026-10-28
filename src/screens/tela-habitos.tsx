@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import { useEffect, useState } from 'react';
 import { Link, useRouter } from 'expo-router';
 import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -22,12 +23,63 @@ function Cabecalho({ busca, onBuscaChange }: { busca: string; onBuscaChange: (bu
   );
 }
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+  }),
+});
+
 export function TelaHabitos() {
   const router = useRouter();
   const [habitos, setHabitos] = useState<Habito[]>(HABITOS);
   const [busca, setBusca] = useState('');
   const [atualizando, setAtualizando] = useState(false);
   const [registrando, setRegistrando] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState(false);
+
+  useEffect(() => {
+    async function requestPermission() {
+      const { status } = await Notifications.requestPermissionsAsync();
+      setPermissionGranted(status === 'granted');
+    }
+
+    requestPermission();
+
+    const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
+      console.log('Notificação recebida');
+    });
+
+    const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('Notificação tocada');
+      const habitId = String(response.notification.request.content.data?.habitId ?? '5');
+      router.push({ pathname: '/habit/[id]', params: { id: habitId } });
+    });
+
+    return () => {
+      receivedSubscription.remove();
+      responseSubscription.remove();
+    };
+  }, [router]);
+
+  async function agendarLembrete() {
+    if (!permissionGranted) {
+      console.log('Permissão não concedida');
+      return;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Lembrete de hábito',
+        body: 'Seu hábito precisa ser revisado.',
+        data: { habitId: '5' },
+      },
+      trigger: {
+        seconds: 5,
+      },
+    });
+  }
 
   function alternar(id: string) {
     setHabitos((prev) =>
@@ -85,6 +137,12 @@ export function TelaHabitos() {
             habito={item}
             onAlternar={alternar}
             onRemover={remover}
+            onAbrirDetalhe={(id) =>
+              router.push({
+                pathname: '/habit/[id]',
+                params: { id },
+              })
+            }
           />
         )}
         renderSectionHeader={({ section }) => (
@@ -101,6 +159,13 @@ export function TelaHabitos() {
 
       <View style={styles.rodape}>
         <BotaoAcao rotulo="Novo hábito" onPressionar={() => setRegistrando(true)} />
+
+        <Pressable
+          onPress={agendarLembrete}
+          style={({ pressed }) => [styles.botaoRota, pressed && styles.botaoPressionado]}
+        >
+          <Text style={styles.textoBotaoRota}>Agendar lembrete em 5s</Text>
+        </Pressable>
 
         <Pressable
           onPress={() => router.push('/registrar-foto')}

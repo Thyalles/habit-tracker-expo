@@ -1,18 +1,51 @@
-// Atividades 1 e 2 — Layout Raiz
-// Onde: src/app/_layout.tsx
+// Exercício 3 — RESOLUÇÃO: Drawer com menu lateral
+// Nível ⭐⭐
+// No sandbox: src/app/_layout.tsx
 
-import { Stack } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Drawer } from 'expo-router/drawer';
 
-export default function LayoutRaiz() {
+export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerTintColor: '#f26522' }}>
-      <Stack.Screen name="index" options={{ title: 'Meus hábitos' }} />
-      <Stack.Screen
-        name="registrar-foto"
-        options={{ title: 'Foto do hábito', headerBackTitle: 'Hábitos' }}
+    <Drawer backBehavior="history" screenOptions={{ drawerActiveTintColor: '#007AFF' }}>
+      <Drawer.Screen
+        name="(tabs)"
+        options={{
+          drawerLabel: 'Home',
+          title: 'Home',
+          drawerIcon: ({ color, size }) => <MaterialIcons name="home" size={size} color={color} />,
+        }}
       />
-      <Stack.Screen name="sobre" options={{ title: 'Sobre o app' }} />
-      <Stack.Screen name="galeria" options={{ title: 'Galeria do hábito' }} />
-    </Stack>
+      <Drawer.Screen
+        name="about"
+        options={{
+          drawerLabel: 'Sobre',
+          title: 'Sobre',
+          drawerIcon: ({ color, size }) => <MaterialIcons name="info" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="settings"
+        options={{
+          drawerLabel: 'Configurações',
+          title: 'Configurações',
+          drawerIcon: ({ color, size }) => <MaterialIcons name="settings" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="habit/[id]"
+        options={{
+          title: 'Detalhe do hábito',
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
+      <Drawer.Screen
+        name="notificacoes"
+        options={{
+          title: 'Notificações (Ex 4)',
+          drawerItemStyle: { display: 'none' },
+        }}
+      />
+    </Drawer>
   );
 }

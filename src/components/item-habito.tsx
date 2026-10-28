@@ -9,6 +9,7 @@ export type ItemHabitoProps = {
   habito: Habito;
   onAlternar: (id: string) => void;
   onRemover: (id: string) => void;
+  onAbrirDetalhe?: (id: string) => void;
 };
 
 // O leitor de tela não enxerga a miniatura nem lê a coordenada formatada: o rótulo
@@ -25,10 +26,17 @@ function descrever(habito: Habito): string {
   return partes.join(', ');
 }
 
-export function ItemHabito({ habito, onAlternar, onRemover }: ItemHabitoProps) {
+export function ItemHabito({ habito, onAlternar, onRemover, onAbrirDetalhe }: ItemHabitoProps) {
   return (
     <Pressable
-      onPress={() => onAlternar(habito.id)}
+      onPress={() => {
+        if (onAbrirDetalhe) {
+          onAbrirDetalhe(habito.id);
+          return;
+        }
+
+        onAlternar(habito.id);
+      }}
       onLongPress={() => onRemover(habito.id)}
       accessibilityRole="button"
       accessibilityLabel={descrever(habito)}
@@ -58,7 +66,14 @@ export function ItemHabito({ habito, onAlternar, onRemover }: ItemHabitoProps) {
         titulo={habito.titulo}
         categoria={habito.categoria}
         status={habito.status}
-        onPress={() => onAlternar(habito.id)}
+        onPress={() => {
+          if (onAbrirDetalhe) {
+            onAbrirDetalhe(habito.id);
+            return;
+          }
+
+          onAlternar(habito.id);
+        }}
         destacado={habito.destacado}
         fotoUri={habito.fotoUri}
         local={habito.local}
