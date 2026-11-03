@@ -8,11 +8,11 @@ export function TelaSobre() {
     <View style={estilos.tela}>
       <Text style={estilos.titulo}>Rastreador de Micro-hábitos</Text>
       <Text style={estilos.subtitulo}>
-        Versão: Aula 7 (Drawer, Tabs, Rotas Dinâmicas e Notificações)
+        Versão: Aula 8 (Hooks, Zustand e Persistência Local)
       </Text>
 
       <Text style={estilos.descricao}>
-        Acompanhe seus hábitos diários, visualize estatísticas e receba lembretes locais.
+        Acompanhe seus hábitos diários com estado global compartilhado via Zustand e persistência em disco com AsyncStorage e SQLite.
       </Text>
 
       <Pressable onPress={() => router.back()} style={estilos.botao}>

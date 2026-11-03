@@ -7,7 +7,7 @@ import {
 import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
 import { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNotificationAsync';
 import { useEffect, useState } from 'react';
-import { AppState, InteractionManager, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export function TelaNotificacoes() {
   const router = useRouter();
@@ -23,14 +23,12 @@ export function TelaNotificacoes() {
     requestPermission();
 
     const navegarParaDetalhe = (habitId: string) => {
-      InteractionManager.runAfterInteractions(() => {
-        setTimeout(() => {
-          router.push({
-            pathname: '/habit/[id]',
-            params: { id: habitId },
-          });
-        }, 300);
-      });
+      setTimeout(() => {
+        router.push({
+          pathname: '/habit/[id]',
+          params: { id: habitId },
+        });
+      }, 300);
     };
 
     // 2. Registrar listeners
