@@ -1,6 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useRouter } from 'expo-router';
-import { Pressable, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { requestPermissionsAsync } from 'expo-notifications/build/NotificationPermissions';
+import {
+  addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
+} from 'expo-notifications/build/NotificationsEmitter';
+import { setNotificationHandler } from 'expo-notifications/build/NotificationsHandler';
+import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
+import { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNotificationAsync';
+import {
+  AppState,
+  InteractionManager,
+  Pressable,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { BotaoAcao } from '../components/botao-acao';
 import { ItemHabito } from '../components/item-habito';
@@ -10,6 +27,15 @@ import { agrupar, filtrarPorTitulo } from '../lib/agrupar';
 import { cores, espaco, tipografia } from '../theme';
 import type { Habito } from '../types/habito';
 import { TelaRegistrarHabito } from './tela-registrar-habito';
+
+setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 function Cabecalho({ busca, onBuscaChange }: { busca: string; onBuscaChange: (busca: string) => void; }) {
   return (
@@ -28,15 +54,81 @@ export function TelaHabitos() {
   const [busca, setBusca] = useState('');
   const [atualizando, setAtualizando] = useState(false);
   const [registrando, setRegistrando] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState(false);
 
-  function alternar(id: string) {
-    setHabitos((prev) =>
-      prev.map((h) =>
-        h.id === id
-          ? { ...h, status: h.status === 'pendente' ? 'concluido' : 'pendente' }
-          : h
-      )
-    );
+  useEffect(() => {
+    async function requestPermission() {
+      const { status } = await requestPermissionsAsync();
+      setPermissionGranted(status === 'granted');
+    }
+
+    requestPermission();
+
+    const receivedListener = addNotificationReceivedListener((notification) => {
+      console.log('Notificação recebida', notification);
+    });
+
+    const navegarParaDetalhe = (habitId: string) => {
+      InteractionManager.runAfterInteractions(() => {
+        setTimeout(() => {
+          router.push({
+            pathname: '/habit/[id]',
+            params: { id: habitId },
+          });
+        }, 300);
+      });
+    };
+
+    const responseListener = addNotificationResponseReceivedListener((response) => {
+      console.log('Notificação tocada', response);
+      const habitId = String(response?.notification?.request?.content?.data?.habitId ?? '5');
+
+      if (AppState.currentState === 'active') {
+        navegarParaDetalhe(habitId);
+      } else {
+        const appStateSub = AppState.addEventListener('change', (nextState) => {
+          if (nextState === 'active') {
+            appStateSub.remove();
+            navegarParaDetalhe(habitId);
+          }
+        });
+      }
+    });
+
+    return () => {
+      receivedListener.remove();
+      responseListener.remove();
+    };
+  }, [router]);
+
+  async function agendarLembrete() {
+    if (!permissionGranted) {
+      const { status } = await requestPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permissão não concedida');
+        return;
+      }
+      setPermissionGranted(true);
+    }
+
+    await scheduleNotificationAsync({
+      content: {
+        title: 'Hora do hábito!',
+        body: 'Não esqueça de sua rotina.',
+        data: { habitId: '5' },
+      },
+      trigger: {
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 5,
+      },
+    });
+  }
+
+  function abrirDetalhe(id: string) {
+    router.push({
+      pathname: '/habit/[id]',
+      params: { id },
+    });
   }
 
   function remover(id: string) {
@@ -83,7 +175,7 @@ export function TelaHabitos() {
         renderItem={({ item }) => (
           <ItemHabito
             habito={item}
-            onAlternar={alternar}
+            onAlternar={abrirDetalhe}
             onRemover={remover}
           />
         )}
@@ -103,6 +195,13 @@ export function TelaHabitos() {
         <BotaoAcao rotulo="Novo hábito" onPressionar={() => setRegistrando(true)} />
 
         <Pressable
+          onPress={agendarLembrete}
+          style={({ pressed }) => [styles.botaoNotificacao, pressed && styles.botaoPressionado]}
+        >
+          <Text style={styles.textoBotaoRota}>Agendar notificação em 5s</Text>
+        </Pressable>
+
+        <Pressable
           onPress={() => router.push('/registrar-foto')}
           style={({ pressed }) => [styles.botaoRota, pressed && styles.botaoPressionado]}
         >
@@ -115,7 +214,7 @@ export function TelaHabitos() {
           </Pressable>
         </Link>
 
-        <Link href="/sobre" style={styles.linkSobre}>
+        <Link href="/about" style={styles.linkSobre}>
           Sobre o app
         </Link>
       </View>
@@ -146,6 +245,12 @@ const styles = StyleSheet.create({
   },
   separador: { height: espaco.sm },
   rodape: { padding: espaco.md, gap: espaco.sm },
+  botaoNotificacao: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
   botaoRota: {
     backgroundColor: '#f26522',
     paddingVertical: 14,
