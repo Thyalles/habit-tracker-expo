@@ -1,5 +1,5 @@
-// Atividade 2 — A Galeria do Hábito
-// Onde: src/app/galeria.tsx
+// Exercício 2 — RESOLUÇÃO: a galeria com seleção múltipla
+// Nível ⭐⭐
 //
 // Por que a seleção múltipla e o recorte (allowsEditing) NÃO convivem:
 // Quando `allowsMultipleSelection: true` está ativo, o seletor nativo do sistema
@@ -10,14 +10,13 @@
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-// Regra de ouro da arquitetura: o componente de miniatura mora em src/components/,
-// NUNCA declarado dentro de src/app/ para não gerar rotas fantasmas.
 import { MiniaturaFoto } from '../components/miniatura-foto';
 
 function renderMiniatura({ item }: { item: ImagePicker.ImagePickerAsset }) {
   return <MiniaturaFoto item={item} />;
 }
 
+// Componente da lista vazia, também fora.
 function ListaVazia() {
   return <Text style={estilos.vazio}>Nenhuma foto escolhida ainda.</Text>;
 }
@@ -25,7 +24,9 @@ function ListaVazia() {
 export default function TelaGaleria() {
   const [fotos, setFotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
 
-  async function escolherFotos() {
+  async function escolherVarias() {
+    // Seleção múltipla com limite de 6.
+    // allowsEditing não convive com allowsMultipleSelection (o sistema ignora o recorte).
     const resultado = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsMultipleSelection: true,
@@ -39,7 +40,7 @@ export default function TelaGaleria() {
 
   return (
     <View style={estilos.tela}>
-      <Pressable onPress={escolherFotos} style={estilos.botao}>
+      <Pressable onPress={escolherVarias} style={estilos.botao}>
         <Text style={estilos.textoBotao}>Escolher até 6 fotos</Text>
       </Pressable>
 
@@ -62,5 +63,6 @@ const estilos = StyleSheet.create({
   textoBotao: { color: '#fff', fontWeight: '700', fontSize: 16 },
   grade: { gap: 8 },
   linha: { gap: 8 },
-  vazio: { fontSize: 15, color: '#666', textAlign: 'center', marginTop: 24 },
+  miniatura: { flex: 1, aspectRatio: 1, borderRadius: 8, maxWidth: '33%' },
+  vazio: { fontSize: 15, color: '#666' },
 });

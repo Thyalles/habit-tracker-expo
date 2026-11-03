@@ -26,9 +26,10 @@ export default function TelaSobre() {
 
 const estilos = StyleSheet.create({
   tela: { flex: 1, padding: 24, gap: 16, justifyContent: 'center' },
-  titulo: { fontSize: 22, fontWeight: '700', color: '#333' },
-  subtitulo: { fontSize: 16, color: '#666' },
-  limitacao: { fontSize: 14, color: '#999', fontStyle: 'italic', lineHeight: 20 },
+  titulo: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
+  subtitulo: { fontSize: 18, textAlign: 'center' },
+  limitacao: { fontSize: 16, color: '#666', textAlign: 'center', lineHeight: 24 },
+  texto: { fontSize: 16 },
   botao: { backgroundColor: '#f26522', paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
   textoBotao: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });

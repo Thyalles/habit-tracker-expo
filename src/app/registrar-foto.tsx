@@ -47,8 +47,9 @@ export default function TelaRegistrarFoto() {
   }
 
   async function escolherDaGaleria() {
-    setFalha(null);
-
+    // Só imagens, recorte 4:3, qualidade 0.7.
+    // Precisa pedir permissão antes? Não: quem mostra as fotos é o sistema,
+    // e o app só recebe a que o usuário escolheu.
     const resultado = await ImagePicker.launchImageLibraryAsync(OPCOES);
     if (resultado.canceled) return;
 
@@ -69,10 +70,6 @@ export default function TelaRegistrarFoto() {
           <Text>Nenhuma foto ainda</Text>
         </View>
       )}
-
-      <Pressable onPress={tirarFoto} style={estilos.botao}>
-        <Text style={estilos.textoBotao}>Tirar foto</Text>
-      </Pressable>
 
       <Pressable onPress={escolherDaGaleria} style={estilos.botaoSecundario}>
         <Text style={estilos.textoBotaoSecundario}>Escolher da galeria</Text>
@@ -96,9 +93,9 @@ const estilos = StyleSheet.create({
   previa: { width: '100%', aspectRatio: 4 / 3, borderRadius: 12 },
   semFoto: { backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center' },
   botao: { backgroundColor: '#f26522', paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
-  botaoSecundario: { borderWidth: 2, borderColor: '#f26522', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
-  textoBotao: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  textoBotaoSecundario: { color: '#f26522', fontWeight: '700', fontSize: 16 },
+  botaoSecundario: { backgroundColor: '#666', paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
   desligado: { opacity: 0.4 },
-  erro: { fontSize: 15, color: '#b00020' },
+  textoBotao: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  textoBotaoSecundario: { color: '#fff', fontWeight: '700', fontSize: 16, textAlign: 'center' },
+  erro: { color: '#c00', textAlign: 'center' },
 });
