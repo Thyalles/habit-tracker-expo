@@ -5,50 +5,52 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import FocusTimer from '../components/focus-timer';
 import { useTheme } from '../context/theme-context';
-import { listFocusSessions, saveFocusSession } from '../services/focus-db';
 import { useHabitStore } from '../store/use-habit-store';
 
 export function TelaDetalheHabito() {
-  // ⚠️ Regra dos Hooks: declare TODOS os hooks no topo, antes de qualquer return condicional!
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isDark } = useTheme();
 
-  // TODO Atividade Aplicada 5.1: Buscar o hábito pelo id na useHabitStore com seletor
-  // Ex: const habit = useHabitStore((s) => s.habits.find((h) => h.id === id));
   const habit = useHabitStore((s) => s.habits.find((h) => h.id === id));
   const toggleHabit = useHabitStore((s) => s.toggleHabit);
   const removeHabit = useHabitStore((s) => s.removeHabit);
 
-  void isDark;
-  void toggleHabit;
-  void removeHabit;
-  void saveFocusSession;
-  void listFocusSessions;
-
-  // TODO Atividade Aplicada 5.2: Se !habit, exibir mensagem "Hábito não encontrado" e botão para voltar
+  if (!habit) {
+    return (
+      <View style={[styles.container, isDark && styles.containerDark]}>
+        <Text style={[styles.titulo, isDark && styles.textDark]}>Hábito não encontrado</Text>
+        <Pressable onPress={() => router.back()} style={[styles.botao, styles.botaoVoltar]}>
+          <Text style={styles.textoBotao}>Voltar</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>{habit ? habit.title : 'Detalhes do hábito'}</Text>
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <Text style={[styles.titulo, isDark && styles.textDark]}>{habit.title}</Text>
       <Text style={styles.id}>Hábito ID: {id}</Text>
-      <Text style={styles.status}>
-        Status: {habit?.done ? '✅ Concluído' : '⬜ Pendente'}
+      <Text style={[styles.status, isDark && styles.textDark]}>
+        Status: {habit.done ? '✅ Concluído' : '⬜ Pendente'}
       </Text>
 
-      {/* Cronômetro de foco (Exercício 2) */}
       <FocusTimer />
 
       <View style={styles.acoes}>
-        {/* TODO Atividade Aplicada 5.3: Chamar toggleHabit(id) ao pressionar */}
-        <Pressable onPress={() => {}} style={styles.botao}>
+        <Pressable onPress={() => toggleHabit(habit.id)} style={styles.botao}>
           <Text style={styles.textoBotao}>
-            {habit?.done ? 'Marcar como pendente' : 'Concluir hábito'}
+            {habit.done ? 'Marcar como pendente' : 'Concluir hábito'}
           </Text>
         </Pressable>
 
-        {/* TODO Atividade Aplicada 5.4: Chamar removeHabit(id) e voltar com router.back() */}
-        <Pressable onPress={() => {}} style={[styles.botao, styles.botaoExcluir]}>
+        <Pressable
+          onPress={() => {
+            removeHabit(habit.id);
+            router.back();
+          }}
+          style={[styles.botao, styles.botaoExcluir]}
+        >
           <Text style={styles.textoBotao}>Excluir hábito</Text>
         </Pressable>
 
@@ -63,10 +65,12 @@ export function TelaDetalheHabito() {
 export default TelaDetalheHabito;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12, padding: 24 },
-  titulo: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12, padding: 24, backgroundColor: '#f5f5f5' },
+  containerDark: { backgroundColor: '#111827' },
+  titulo: { fontSize: 22, fontWeight: '700', textAlign: 'center', color: '#111827' },
   id: { fontSize: 16, color: '#FF6002', fontWeight: '600' },
   status: { fontSize: 16, color: '#555', marginBottom: 8 },
+  textDark: { color: '#f5f5f5' },
   acoes: { width: '100%', gap: 10, marginTop: 16 },
   botao: {
     backgroundColor: '#FF6002',

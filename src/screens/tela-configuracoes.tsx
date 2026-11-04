@@ -5,20 +5,18 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import { useTheme } from '../context/theme-context';
 
 export function TelaConfiguracoes() {
-  // TODO Ex 3.5: Consumir { isDark, toggleTheme } de useTheme()
   const { isDark, toggleTheme } = useTheme();
-  void isDark;
-  void toggleTheme;
 
   return (
-    // TODO Ex 3.6: Alterar backgroundColor e cor do texto conforme isDark e ligar o <Switch> a isDark e toggleTheme
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Configurações</Text>
-      <Text style={styles.texto}>Gerencie preferências e o tema do aplicativo.</Text>
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <Text style={[styles.titulo, isDark && styles.textDark]}>Configurações</Text>
+      <Text style={[styles.texto, isDark && styles.textDark]}>
+        Gerencie preferências e o tema do aplicativo.
+      </Text>
 
-      <View style={styles.linhaTema}>
-        <Text style={styles.rotulo}>Modo Escuro</Text>
-        <Switch value={false} onValueChange={() => {}} />
+      <View style={[styles.linhaTema, isDark && styles.linhaTemaDark]}>
+        <Text style={[styles.rotulo, isDark && styles.textDark]}>Modo Escuro</Text>
+        <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
     </View>
   );
@@ -27,9 +25,11 @@ export function TelaConfiguracoes() {
 export default TelaConfiguracoes;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24 },
-  titulo: { fontSize: 20, fontWeight: '700' },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24, backgroundColor: '#f5f5f5' },
+  containerDark: { backgroundColor: '#111827' },
+  titulo: { fontSize: 20, fontWeight: '700', color: '#111827' },
   texto: { fontSize: 16, color: '#555', textAlign: 'center' },
+  textDark: { color: '#f5f5f5' },
   linhaTema: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -40,6 +40,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
-  rotulo: { fontSize: 16, fontWeight: '600' },
+  linhaTemaDark: {
+    borderColor: '#374151',
+    backgroundColor: '#1f2937',
+  },
+  rotulo: { fontSize: 16, fontWeight: '600', color: '#111827' },
 });

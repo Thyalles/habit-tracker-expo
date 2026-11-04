@@ -39,17 +39,11 @@ export function TelaHabitos() {
   const [novoHabitoTexto, setNovoHabitoTexto] = useState('');
   const [permissionGranted, setPermissionGranted] = useState(false);
 
-  // TODO Atividade Aplicada 3.1: Consumir isDark de useTheme() e habits, addHabit, toggleHabit, removeHabit de useHabitStore
   const { isDark } = useTheme();
   const habits = useHabitStore((s) => s.habits);
   const addHabit = useHabitStore((s) => s.addHabit);
   const toggleHabit = useHabitStore((s) => s.toggleHabit);
   const removeHabit = useHabitStore((s) => s.removeHabit);
-
-  void isDark;
-  void addHabit;
-  void toggleHabit;
-  void removeHabit;
 
   useEffect(() => {
     async function requestPermission() {
@@ -119,7 +113,8 @@ export function TelaHabitos() {
 
   function handleAdicionarHabito() {
     if (!novoHabitoTexto.trim()) return;
-    // TODO Atividade Aplicada 3.2: Chamar addHabit(novoHabitoTexto) e limpar o input local
+    addHabit(novoHabitoTexto);
+    setNovoHabitoTexto('');
   }
 
   function abrirDetalhe(id: string) {
@@ -130,12 +125,13 @@ export function TelaHabitos() {
   }
 
   return (
-    <View style={styles.tela}>
+    <View style={[styles.tela, isDark && styles.telaEscura]}>
       <View style={styles.conteudo}>
         <View style={styles.linhaInput}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, isDark && styles.inputEscura]}
             placeholder="Novo hábito..."
+            placeholderTextColor={isDark ? '#9ca3af' : '#6b7280'}
             value={novoHabitoTexto}
             onChangeText={setNovoHabitoTexto}
           />
@@ -149,15 +145,13 @@ export function TelaHabitos() {
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <View style={styles.separador} />}
           renderItem={({ item }) => (
-            <View style={styles.card}>
-              {/* TODO Atividade Aplicada 3.3: Tocar no checkbox chama toggleHabit(item.id) */}
-              <Pressable onPress={() => {}} style={styles.checkbox}>
+            <View style={[styles.card, isDark && styles.cardEscura]}>
+              <Pressable onPress={() => toggleHabit(item.id)} style={styles.checkbox}>
                 <Text style={styles.checkboxTexto}>{item.done ? '✅' : '⬜'}</Text>
               </Pressable>
 
-              {/* TODO Atividade Aplicada 3.4: Tocar no título navega para /habit/[id] */}
               <Pressable onPress={() => abrirDetalhe(item.id)} style={styles.cardTitulo}>
-                <Text style={[styles.tituloHabito, item.done && styles.tituloConcluido]}>
+                <Text style={[styles.tituloHabito, item.done && styles.tituloConcluido, isDark && styles.tituloHabitoEscuro]}>
                   {item.title}
                 </Text>
               </Pressable>
@@ -186,6 +180,7 @@ export default TelaHabitos;
 
 const styles = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cores.fundo },
+  telaEscura: { backgroundColor: '#111827' },
   conteudo: { flex: 1, padding: espaco.md },
   linhaInput: { flexDirection: 'row', gap: espaco.sm, marginBottom: espaco.md },
   input: {
@@ -197,6 +192,12 @@ const styles = StyleSheet.create({
     paddingVertical: espaco.sm,
     backgroundColor: cores.cartao,
     fontSize: 16,
+    color: cores.texto,
+  },
+  inputEscura: {
+    backgroundColor: '#1f2937',
+    borderColor: '#374151',
+    color: '#f5f5f5',
   },
   botaoAdicionar: {
     backgroundColor: '#FF6002',
@@ -214,10 +215,14 @@ const styles = StyleSheet.create({
     borderRadius: espaco.sm,
     gap: espaco.sm,
   },
+  cardEscura: {
+    backgroundColor: '#1f2937',
+  },
   checkbox: { padding: 4 },
   checkboxTexto: { fontSize: 18 },
   cardTitulo: { flex: 1 },
   tituloHabito: { fontSize: 16, fontWeight: '600', color: cores.texto },
+  tituloHabitoEscuro: { color: '#f5f5f5' },
   tituloConcluido: { textDecorationLine: 'line-through', color: cores.textoFraco },
   separador: { height: espaco.sm },
   rodape: { padding: espaco.md, gap: espaco.sm },

@@ -10,9 +10,14 @@ export default function FocusTimer() {
 
   useEffect(() => {
     // TODO Ex 2.1: Se não estiver rodando (!isRunning), sair cedo
+    if (!isRunning) return;
     // TODO Ex 2.2: Criar setInterval de 1000ms incrementando 'seconds' com prev => prev + 1
+    const intervalId = setInterval(() => {
+      setSeconds((prev) => prev + 1);
+    }, 1000);
     // TODO Ex 2.3: Retornar função de cleanup com clearInterval(intervalId)
-  }, [/* TODO Ex 2.4: Dependências */]);
+    return () => clearInterval(intervalId);
+  }, [isRunning]);
 
   return (
     <View style={styles.box}>
@@ -27,6 +32,7 @@ export default function FocusTimer() {
         <Pressable
           style={[styles.button, styles.resetButton]}
           onPress={() => {
+            if(seconds > 0) alert('Você zerou o cronômetro!'); // TODO Ex 2.4: Alertar se zerou com seconds > 0
             setIsRunning(false);
             setSeconds(0);
           }}

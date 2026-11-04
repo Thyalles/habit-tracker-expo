@@ -19,29 +19,41 @@ type HabitStore = {
   removeHabit: (id: string) => void;
 };
 
-// TODO Ex 5.1: Envolver a store com create<HabitStore>()(persist(..., { name: '@habits:store', storage: createJSONStorage(() => AsyncStorage) }))
-void AsyncStorage;
-void createJSONStorage;
-void persist;
+export const useHabitStore = create<HabitStore>()(
+  persist(
+    (set) => ({
+      habits: [
+        { id: '1', title: 'Beber 2L de água', done: false },
+        { id: '2', title: 'Ler 15 páginas', done: true },
+      ],
+      addHabit: (title) => {
+        const normalizedTitle = title.trim();
 
-export const useHabitStore = create<HabitStore>((set) => ({
-  habits: [
-    { id: '1', title: 'Beber 2L de água', done: false },
-    { id: '2', title: 'Ler 15 páginas', done: true },
-  ],
-  addHabit: (title) => {
-    // TODO Ex 4.1: Implementar adição imutável de hábito com set((state) => ({ ... }))
-    void set;
-    void title;
-  },
-  toggleHabit: (id) => {
-    // TODO Ex 4.2: Implementar inversão de 'done' com .map() usando set((state) => ({ ... }))
-    void set;
-    void id;
-  },
-  removeHabit: (id) => {
-    // TODO Ex 4.3: Implementar remoção com .filter() usando set((state) => ({ ... }))
-    void set;
-    void id;
-  },
-}));
+        if (!normalizedTitle) return;
+
+        set((state) => ({
+          habits: [
+            ...state.habits,
+            { id: Date.now().toString(), title: normalizedTitle, done: false },
+          ],
+        }));
+      },
+      toggleHabit: (id) => {
+        set((state) => ({
+          habits: state.habits.map((habit) =>
+            habit.id === id ? { ...habit, done: !habit.done } : habit,
+          ),
+        }));
+      },
+      removeHabit: (id) => {
+        set((state) => ({
+          habits: state.habits.filter((habit) => habit.id !== id),
+        }));
+      },
+    }),
+    {
+      name: '@habits:store',
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+);
